@@ -8,8 +8,8 @@ services:
     ports:
       - "8069:8069"
     volumes:
-      - ./addons:/mnt/extra-addons # Carpeta para los módulos personalizados
-      - ./odoo.conf:/etc/odoo/odoo.conf # Archivo de configuración de Odoo
+      - ./addons:/mnt/extra-addons # Carpeta para módulos personalizados
+      - ./odoo.conf:/etc/odoo/odoo.conf # Configuración de Odoo
     environment:
       - HOST=db
       - USER=odoo
@@ -21,8 +21,22 @@ services:
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"  # importante para que pgAdmin se conecte
     volumes:
-      - ./postgresql:/var/lib/postgresql/data # Guarda los datos de la base de datos
+      - ./postgresql:/var/lib/postgresql/data # Guarda los datos de la base
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5050:80"   # accedes desde http://localhost:5050
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
 
 volumes:
   pg_data:
